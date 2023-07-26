@@ -1,0 +1,75 @@
+﻿@using Blazored.LocalStorage;
+@using mBay_Client.Service.IService;
+@using mBay_Client.ViewModels;
+@using mBay_Common;
+@using mBay_Model;
+@inject ICategoryService _categoryService
+@inject ISyncLocalStorageService _localStorageService
+@inject ICartService _cartService
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">mBay</a>
+        @foreach (var item in Categories)
+        {
+        //href="/category/products/@item.Id"
+            <a class="navbar-brand" @onclick="x=>{BtnMenuClick(item.Id);}">@item.Name</a>
+        }
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item p-0">
+                    <NavLink class="nav-link" href="/cart">
+                        <span class="p-2">
+                            @(GetCartCount())
+                            <strong>Sepet</strong>
+                        </span>
+                    </NavLink>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <ul class="navbar-nav">
+
+                    <li class="nav-item p-0">
+                        <NavLink class="nav-link" href="#">
+                            <span class="p-2">
+                                Hello
+                            </span>
+                        </NavLink>
+                    </li>
+
+                </ul>
+            </form>
+        </div>
+    </div>
+</nav>
+@code {
+    public IEnumerable<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
+    private List<ShoppingCart> ShoppingCarts { get; set; } = new List<ShoppingCart>();
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await _categoryService.GetAll();
+        _cartService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        _cartService.OnChange -= StateHasChanged;
+
+    }
+    private int GetCartCount()
+    {
+        var result = _localStorageService.GetItem<List<ShoppingCart>>(Keys.ShoppingCart);
+        return result == null ? 0 : result.Count;
+    }
+
+    void BtnMenuClick(int id)
+    {
+        NavigationManager.NavigateTo($"category/produtcs/{id}");
+    }
+}
