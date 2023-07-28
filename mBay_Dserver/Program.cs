@@ -9,11 +9,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Syncfusion.Blazor;
+
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjYwNTcwN0AzMjMyMmUzMDJlMzBWTStZdDh5eDVWdWdjT0JyZ2xkaVkwQnNYd05zL3hCaTNwQTZwd1ExKzVFPQ==");
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductPriceRepository, ProductPriceRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();//ikisi arasýnda eþleþtirme yapýyoruz.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));//path
 builder.Services.AddRazorPages();

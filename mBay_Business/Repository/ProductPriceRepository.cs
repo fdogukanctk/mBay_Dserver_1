@@ -21,13 +21,13 @@ namespace mBay_Business.Repository
         {
             _db = db;
             _mapper = mapper;
-
         }
+
         public async Task<ProductPriceDTO> Create(ProductPriceDTO objDTO)
         {
             var obj = _mapper.Map<ProductPriceDTO, ProductPrice>(objDTO);
             var addedObj = _db.ProductPrices.Add(obj);
-            await _db.SaveChangesAsync();// asenkron çalışıyoruz çünkü birden fazla yerde process gerçekleştirilebilir.
+            await _db.SaveChangesAsync();
             return _mapper.Map<ProductPrice, ProductPriceDTO>(addedObj.Entity);
         }
 
@@ -38,20 +38,21 @@ namespace mBay_Business.Repository
             {
                 _db.ProductPrices.Remove(obj);
                 await _db.SaveChangesAsync();
-
             }
             return 0;
         }
 
-        public async Task<IEnumerable<ProductPriceDTO>> GetAll(int? id = null) //foreach döngüsü gibi 
+        public async Task<IEnumerable<ProductPriceDTO>> GetAll(int? id = null)
         {
             if (id != null && id > 0)
             {
                 return _mapper.Map<IEnumerable<ProductPrice>, IEnumerable<ProductPriceDTO>>(_db.ProductPrices.Where(x => x.ProductId == id));
+
             }
             else
             {
                 return _mapper.Map<IEnumerable<ProductPrice>, IEnumerable<ProductPriceDTO>>(_db.ProductPrices);
+
             }
         }
 
@@ -78,11 +79,6 @@ namespace mBay_Business.Repository
                 return _mapper.Map<ProductPrice, ProductPriceDTO>(objFromDb);
             }
             return objDTO;
-        }
-
-        Task<IEnumerable<ProductPriceDTO>> IProductPriceRepository.GetAll()
-        {
-            throw new NotImplementedException();
         }
     }
 }
